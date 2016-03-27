@@ -1,0 +1,33 @@
+{
+    "builders": [{
+    "type": "virtualbox-iso",
+    "vboxmanage": [
+      [ "modifyvm", "{{.Name}}", "--memory", "4096" ],
+      [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+    ],
+    "guest_os_type": "Windows2012_64",
+    "iso_url": "iso/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO",
+    "iso_checksum": "5b5e08c490ad16b59b1d9fab0def883a",
+    "iso_checksum_type": "md5",
+    "guest_additions_mode": "attach",
+    "communicator": "winrm",
+    "winrm_username": "vagrant",
+    "winrm_password": "vagrant",
+    "winrm_port": "5985",
+    "winrm_timeout": "48h",
+    "shutdown_command": "shutdown /s /t 1 /c \"Packer Shutdown\" /f",
+    "shutdown_timeout": "15m",
+    "floppy_files": [
+      "autounattend.xml",
+      "postinstall.ps1",
+      "wsus.ps1"
+    ]
+  }],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "windows2012r2min-{{.Provider}}.box"
+    }
+  ]
+}
