@@ -1,0 +1,36 @@
+{
+    "builders": [{
+    "type": "virtualbox-iso",
+    "vboxmanage": [
+      [ "modifyvm", "{{.Name}}", "--memory", "4096" ],
+      [ "modifyvm", "{{.Name}}", "--cpus", "2" ],
+      [ "modifyvm", "{{.Name}}", "--natpf1", "guestwinrm,tcp,127.0.0.1,5985,,5985" ]
+    ],
+    "guest_os_type": "Windows81_64",
+    "iso_url": "iso/10586.0.151029-1700.TH2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
+    "iso_checksum": "f9b3d3fac8fd235c185b1c1f97f819ee",
+    "iso_checksum_type": "md5",
+    "guest_additions_mode": "attach",
+    "communicator": "winrm",
+    "winrm_username": "vagrant",
+    "winrm_password": "vagrant",
+    "winrm_port": "5985",
+    "winrm_timeout": "48h",
+    "winrm_insecure": true,
+    "shutdown_command": "shutdown /s /t 1 /c \"Packer Shutdown\" /f",
+    "shutdown_timeout": "15m",
+    "post_shutdown_delay": "15s",
+    "floppy_files": [
+      "autounattend.xml",
+      "postinstall.ps1",
+      "wsus.ps1"
+    ]
+  }],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "window10-{{.Provider}}.box"
+    }
+  ]
+}
