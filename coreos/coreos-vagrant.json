@@ -1,0 +1,27 @@
+{
+  "variables": {
+    "channel": "stable",
+    "version": "current"
+  },
+  "builders": [
+    {
+      "type": "vagrant",
+      "source_path": "https://stable.release.core-os.net/amd64-usr/{{ user `version` }}/coreos_production_vagrant.box",
+      "checksum": "645d6c467957f5f2aa9ed625d619990c75c0fbcbcf175d9c11d4c34050c45093",
+      "checksum_type": "sha256",
+      "communicator": "ssh",
+      "ssh_port": 22,
+      "ssh_username": "core",
+      "ssh_private_key_file": "files/vagrant.pem",
+      "skip_add": "true",
+      "teardown_method": "destroy",
+      "output_dir": "builds/packer-coreos-{{ user `channel` }}-{{ user `version` }}-vagrant"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/python_install.sh"
+    }
+  ]
+}

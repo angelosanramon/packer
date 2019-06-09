@@ -1,0 +1,49 @@
+{
+  "variables": {
+    "channel": "stable",
+    "version": "current"
+  },
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "https://stable.release.core-os.net/amd64-usr/{{ user `version` }}/coreos_production_iso_image.iso",
+      "iso_checksum_type": "sha1",
+      "iso_checksum_url": "https://stable.release.core-os.net/amd64-usr/{{ user `version` }}/coreos_production_iso_image.iso.DIGESTS",
+      "http_directory": "files",
+      "ssh_username": "core",
+      "ssh_port": 22,
+      "ssh_private_key_file": "files/vagrant.pem",
+      "ssh_wait_timeout": "15m",
+      "guest_os_type": "Linux26_64",
+      "guest_additions_mode": "disable",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "1" ]
+      ],
+      "boot_command": [
+        "sudo -i<enter>",
+        "systemctl stop sshd.socket<enter>",
+        "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/cloud-config.yaml<enter>",
+        "coreos-install -d /dev/sda -C {{ user `channel` }} -c cloud-config.yaml<enter>",
+        "reboot<enter>"
+      ],
+      "boot_wait": "30s",
+      "shutdown_command": "sudo -S shutdown -P now",
+      "virtualbox_version_file": ".virtualbox_version",
+      "output_directory": "builds/packer-coreos-{{ user `channel` }}-{{ user `version` }}-virtualbox"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/python_install.sh"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": 9,
+      "output": "./builds/{{.Provider}}/coreos-{{ user `channel` }}.box"
+    }
+  ]
+}

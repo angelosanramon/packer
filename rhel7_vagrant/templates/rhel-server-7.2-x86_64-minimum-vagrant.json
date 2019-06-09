@@ -1,0 +1,44 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "guest_os_type": "RedHat_64",
+      "iso_url": "http://garage-fs.rno.apple.com:8080/packages/iso/rhel-server-7.2-x86_64-dvd.iso",
+      "iso_checksum": "51e013512f489203a923a716b408fbdf",
+      "iso_checksum_type": "md5",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "ssh_username": "root",
+      "ssh_password": "@Anime!5",
+      "ssh_pty": true,
+      "disk_size": 10240,
+      "http_directory": "http",
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo '/sbin/halt -h -p' > /tmp/shutdown.sh; echo '@Anime!5'|sh '/tmp/shutdown.sh'",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "512" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "1" ]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "sh '{{.Path}}'",
+      "scripts": [
+        "scripts/devtools.sh",
+        "scripts/vagrant.sh",
+        "scripts/virtualbox.sh",
+        "scripts/cleanup.sh"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "artifacts/rhel-server-7.2-x86_64-minimum-virtualbox.box"
+    }
+  ]
+}
