@@ -10,7 +10,7 @@
       "iso_url": "https://builds.coreos.fedoraproject.org/prod/streams/{{ user `stream` }}/builds/{{ user `version` }}/x86_64/fedora-coreos-{{ user `version` }}-live.x86_64.iso",
       "iso_checksum": "{{ user `checksum` }}",
       "http_directory": "files",
-      "ssh_username": "core",
+      "ssh_username": "vagrant",
       "ssh_port": 22,
       "ssh_private_key_file": "files/vagrant.pem",
       "ssh_wait_timeout": "15m",
