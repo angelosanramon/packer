@@ -1,14 +1,14 @@
 {
   "variables": {
-    "channel": "stable",
-    "version": "current"
+    "stream": "stable",
+    "version": "32.20201104.3.0",
+    "checksum": "sha256:78b97e3f020e737e631561855984950ff7902e5ff9cb1de1abce789b7ab4e118"
   },
   "builders": [
     {
       "type": "virtualbox-iso",
-      "iso_url": "https://stable.release.core-os.net/amd64-usr/{{ user `version` }}/coreos_production_iso_image.iso",
-      "iso_checksum_type": "sha512",
-      "iso_checksum_url": "https://stable.release.core-os.net/amd64-usr/{{ user `version` }}/coreos_production_iso_image.iso.DIGESTS",
+      "iso_url": "https://builds.coreos.fedoraproject.org/prod/streams/{{ user `stream` }}/builds/{{ user `version` }}/x86_64/fedora-coreos-{{ user `version` }}-live.x86_64.iso",
+      "iso_checksum": "{{ user `checksum` }}",
       "http_directory": "files",
       "ssh_username": "core",
       "ssh_port": 22,
@@ -22,9 +22,7 @@
       ],
       "boot_command": [
         "sudo -i<enter>",
-        "systemctl stop sshd.socket<enter>",
-        "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/cloud-config.yaml<enter>",
-        "coreos-install -d /dev/sda -C {{ user `channel` }} -c cloud-config.yaml<enter>",
+        "coreos-installer install /dev/sda --insecure-ignition --ignition-url http://{{ .HTTPIP }}:{{ .HTTPPort }}/config.ign<enter>",
         "reboot<enter>"
       ],
       "boot_wait": "30s",
@@ -36,14 +34,14 @@
   "provisioners": [
     {
       "type": "shell",
-      "script": "scripts/python_install.sh"
+      "inline": ["sudo rpm-ostree install python3"]
     }
   ],
   "post-processors": [
     {
       "type": "vagrant",
       "compression_level": 9,
-      "output": "./builds/{{.Provider}}/coreos-{{ user `channel` }}.box"
+      "output": "./builds/{{.Provider}}/fcoreos-{{ user `version` }}.box"
     }
   ]
 }
